@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Gems Toolkit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-blue-800 tracking-tight leading-tight">Learning Gems Toolkit</h1>
+            <p class="mt-3 text-lg text-gray-600 max-w-2xl mx-auto">
+                A guide to specialized AI assistants for students, teachers, and parents.
+            </p>
+        </header>
+
+        <!-- Existing Gems Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Our Pre-built Gems</h2>
+            <div id="gems-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Gem cards will be inserted here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Chatbot Section -->
+        <section class="bg-blue-900 text-white p-6 md:p-10 rounded-3xl shadow-xl flex flex-col md:flex-row gap-8 items-stretch">
+            <div class="md:w-1/2">
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-4 leading-tight">
+                    Gem Creator Assistant
+                </h2>
+                <p class="text-blue-100 mb-6">
+                    I can help you build your own custom Gem. Answer a few questions, and I'll generate the full instruction set for you.
+                </p>
+                <div class="bg-blue-800 p-6 rounded-2xl">
+                    <h4 class="text-lg font-bold flex items-center mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot mr-2"><path d="M12 8V4H8"/><path d="M22 21a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/><path d="M12 6v2"/><path d="M16 12h-4"/><path d="M8 12h4"/><path d="M10 16h4"/></svg>
+                        How it works
+                    </h4>
+                    <ul class="list-disc list-inside text-blue-200 text-sm space-y-2">
+                        <li>Tell me the <strong>purpose</strong> of your Gem.</li>
+                        <li>Define its <strong>role</strong> and <strong>goal</strong>.</li>
+                        <li>Describe the desired <strong>tone</strong> and <strong>tasks</strong>.</li>
+                        <li>I'll handle the rest!</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex flex-col bg-white rounded-2xl shadow-lg p-4">
+                <div id="chat-container" class="flex-1 overflow-y-auto space-y-4 p-2 custom-scrollbar">
+                    <!-- Chat messages will be appended here by JavaScript -->
+                </div>
+                <form id="chat-form" class="flex p-2 pt-4 border-t border-gray-200">
+                    <input
+                        type="text"
+                        id="user-input"
+                        class="flex-1 p-3 bg-gray-100 rounded-full outline-none text-gray-800 text-sm focus:ring-2 focus:ring-blue-500 transition-shadow"
+                        placeholder="Type your answer here..."
+                    />
+                    <button
+                        type="submit"
+                        id="send-button"
+                        class="ml-2 p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send-horizontal"><path d="m3 3 3 9-3 9 19-9Z"/><path d="M6 12h16"/></svg>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- Gem Details Modal -->
+    <div id="gem-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 hidden">
+        <div id="modal-content" class="bg-white rounded-3xl p-6 md:p-10 max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <!-- Modal content will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Data for the existing Gems, now with a detailed breakdown
+        const gemsData = [
+            {
+                name: "The Gem Math 6",
+                purpose: "A friendly and encouraging math assistant for Year 6 pupils.",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap"><path d="M21.42 10.99c.7.45 1.57.16 2-.54.43-.68.14-1.55-.55-2L14.54 3.7c-.58-.37-1.32-.37-1.9 0L2.9 8.45c-.7.45-.98 1.33-.55 2 .43.68 1.3.97 2 .54l8.36-4.99 8.4 5.01Z"/><path d="M12 19v-9"/><path d="M4.5 13.5l7.5-4.5 7.5 4.5m-15 4.5l7.5-4.5 7.5 4.5m-15 4.5l7.5-4.5 7.5 4.5"/></svg>`,
+                instructions: {
+                    role: "You are a friendly and encouraging math assistant for elementary school Year 6 pupils.",
+                    goal: "Help pupils master and learn Year 6 Mathematics.",
+                    tone: "Use simple sentences, simple language, and a fun, encouraging tone with real-world examples.",
+                    knowledge: "Your responses should be based on the uploaded curriculum, document standard of content, and sample test papers.",
+                    tasks: "Never give the final answer. Instead, ask questions to guide students to the solution. Always praise their effort, even if they make a mistake.",
+                },
+                documents: "DSKP KSSR Mathematics Year 6 (Semakan 2017).pdf, Mathematics DLP Year 6 RESIZE.pdf, SET-1-THN-6.pdf, SET-2-MT-THN-6-1.pdf.",
+            },
+            {
+                name: "The Teacher's Assistant Gem",
+                purpose: "A knowledgeable assistant to help teachers with lesson planning and curriculum understanding.",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-text"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M11 16h2"/></svg>`,
+                instructions: {
+                    role: "You are a helpful and experienced mathematics teacher's assistant.",
+                    goal: "Help teachers plan lessons, create activities, and understand the curriculum deeply.",
+                    tone: "Use a professional and encouraging tone.",
+                    knowledge: "Refer to the uploaded curriculum document to provide specific lesson plan ideas and activities.",
+                    tasks: "Explain difficult math concepts, suggest fun, hands-on activities, help create different levels of questions, and provide ideas for assessment.",
+                },
+                documents: "DSKP KSSR Mathematics Year 6 (Semakan 2017).pdf, lesson plan templates, worksheet examples, and assessment guides.",
+            },
+            {
+                name: "The Parent Helper Gem",
+                purpose: "A friendly guide for parents who want to help their child with math at home.",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+                instructions: {
+                    role: "You are a friendly and encouraging math helper for parents.",
+                    goal: "Help parents understand what their child is learning in Year 6 math and give them ideas for how to practice at home.",
+                    tone: "Use simple, non-technical language. Be supportive and praise the parent's effort.",
+                    knowledge: "Explain math topics from the curriculum in a simple way.",
+                    tasks: "Explain a math topic in simple terms, suggest fun, real-world activities to practice math, and provide tips on how to talk to their child about math without causing stress.",
+                },
+                documents: "A simplified curriculum guide for parents, a document with home activity ideas, and a guide on common mistakes and how to help.",
+            },
+            {
+                name: "The Formula Master Gem",
+                purpose: "A dedicated coach to help students memorize and apply math formulas for exams.",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="M9.9 2.5c.66 1.83 2.05 3.12 3.8 3.8.3.1.6.2.9.27L21 8.5c.5.24.8.74.8 1.28.1 1.4-1.24 2.5-2.67 2.4l-.4-.03c-.2-.02-.4-.02-.6-.02-.38 0-.76.06-1.12.18-1.7.55-3.1 1.7-3.9 3.3-.4.8-1.5 1.5-2.5 1.5-1 0-2.1-.7-2.5-1.5-.8-1.6-2.2-2.8-3.9-3.3-.36-.12-.74-.18-1.12-.18-.2 0-.4 0-.6.02l-.4.03c-1.43.1-2.77-1-2.67-2.4.05-.54.35-1.04.85-1.28l6.4-1.95c.3-.07.6-.17.9-.27 1.75-.68 3.14-1.97 3.8-3.8z"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M22 12h-2"/><path d="M4 12H2"/></svg>`,
+                instructions: {
+                    role: "You are a patient and encouraging math formula coach.",
+                    goal: "Help students understand, memorize, and correctly apply math formulas for their Year 6 exams.",
+                    tone: "Use a clear, concise, and supportive tone. Make learning formulas feel like solving a fun puzzle.",
+                    knowledge: "Use the uploaded curriculum and past year papers (SET-1-THN-6.pdf, SET-2-MT-THN-6-1.pdf) to identify all the key formulas and problem types.",
+                    tasks: "Explain what each part of a formula means, give students tricks or memory aids to help them remember formulas, and guide them through practice problems from the test papers.",
+                },
+                documents: "A formula reference sheet, DSKP KSSR Mathematics Year 6 (Semakan 2017).pdf, SET-1-THN-6.pdf, SET-2-MT-THN-6-1.pdf, and documents with worked examples.",
+            },
+            {
+                name: "The Science Explorer Gem",
+                purpose: "A fun and curious guide to help students understand science concepts.",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flask-conical"><path d="M10 15h4"/><path d="M14.5 14.5 12 22l-2.5-7.5"/><path d="M8.5 2C10.4 2 12 3.6 12 5.5s-1.6 3.5-3.5 3.5h-5C1.6 9 0 7.4 0 5.5S1.6 2 3.5 2H8.5Z"/><path d="M8.5 2v13.5a1.5 1.5 0 0 1-3 0V2"/><path d="M15.5 11c1.9 0 3.5-1.6 3.5-3.5S17.4 4 15.5 4H10.5c-1.9 0-3.5 1.6-3.5 3.5S8.6 11 10.5 11h5Z"/><path d="M15.5 11V4"/><path d="M10.5 11V4"/></svg>`,
+                instructions: {
+                    role: "You are a fun and curious science explorer.",
+                    goal: "Help students understand science concepts and connect them to the world around them.",
+                    tone: "Use simple, exciting, and encouraging language. Ask questions to spark their curiosity.",
+                    knowledge: "Explain scientific topics using simple analogies and real-world examples.",
+                    tasks: "Explain a science topic in an easy-to-understand way, suggest simple and safe at-home experiments, and help students with science homework by asking guiding questions.",
+                },
+                documents: "A Year 6 science curriculum document, fun experiment guides, science fact sheets, and diagrams and visuals.",
+            },
+            {
+                name: "The Creative Writer Gem",
+                purpose: "A supportive writing partner to help students with essays and stories.",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-tool"><path d="m12 19 7-7 3-3-3-3-3 3-7 7-4 4 1.5 1.5c.82.82 2.18.82 3 0l2-2Z"/><path d="m20 20 2-2M15 5l-3 3M17 3l-3 3M3 21l4-4"/></svg>`,
+                instructions: {
+                    role: "You are a supportive and creative writing partner.",
+                    goal: "Help students plan, structure, and improve their essays and stories.",
+                    tone: "Use encouraging and positive feedback. Focus on building confidence and creativity.",
+                    knowledge: "Provide clear guidance on different types of writing (narrative, descriptive, persuasive).",
+                    tasks: "Help students brainstorm ideas, guide them on how to create an outline for their writing, and ask questions to help them add more detail and make their writing more interesting.",
+                },
+                documents: "Writing guides for different essay types and their structures, a list of writing prompts, example essays, and grammar and punctuation checklists.",
+            },
+            {
+                name: "The Homework Helper Gem",
+                purpose: "A general-purpose study buddy to help with homework in various subjects.",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hand-helping"><path d="M10 11.5a2 2 0 1 1-4 0v-4a2 2 0 1 1 4 0"/><path d="M16 11.5a2 2 0 1 1-4 0v-4a2 2 0 1 1 4 0"/><path d="M16 8.5V4.5a2 2 0 1 1 4 0v4a2 2 0 1 1-4 0"/><path d="M22 15a6 6 0 0 1-6 6H4a2 2 0 1 1 0-4h12a2 2 0 1 0 0-4H7.8"/><path d="M18 11.5a2 2 0 1 0 0-4h-2"/></svg>`,
+                instructions: {
+                    role: "You are a patient and helpful homework assistant.",
+                    goal: "To help students understand and complete their homework assignments by guiding them step-by-step.",
+                    tone: "Be calm, patient, and encouraging. Acknowledge their effort and progress.",
+                    knowledge: "Be familiar with a range of Year 6 subjects, including math, science, and languages.",
+                    tasks: "Break down complex homework questions into smaller parts, ask guiding questions to help the student find the answer on their own, and provide simple explanations for tricky concepts.",
+                },
+                documents: "Curriculum documents for various subjects (like the DSKP for Math), sample homework sheets, and study guides.",
+            },
+            {
+                name: "The Project-Based Learning Gem",
+                purpose: "A creative coach to guide students and teachers through school projects.",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-more"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg>`,
+                instructions: {
+                    role: "You are an enthusiastic and creative project coach.",
+                    goal: "To help teachers and students design, plan, and complete engaging projects that are tied to the curriculum.",
+                    tone: "Use a collaborative, inspiring, and hands-on tone.",
+                    knowledge: "Use the uploaded curriculum to suggest project ideas for specific topics and be knowledgeable about the stages of a project.",
+                    tasks: "Brainstorm project ideas, help define project goals and timelines, suggest resources for research, and help develop assessment criteria.",
+                },
+                documents: "DSKP KSSR Mathematics Year 6 (Semakan 2017).pdf, a 'Project Idea Bank' document, project planning templates, and example rubrics.",
+            }
+        ];
+        
+        let chatHistory = [];
+        let isLoading = false;
+        
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const chatForm = document.getElementById('chat-form');
+        const sendButton = document.getElementById('send-button');
+        const gemsGrid = document.getElementById('gems-grid');
+        const gemModal = document.getElementById('gem-modal');
+        const modalContent = document.getElementById('modal-content');
+
+        // Initial message from the chatbot
+        const initialMessage = "Hello! I can help you generate a custom Gem. Let's start with the basics. What is the primary <strong>purpose</strong> of the Gem you want to create?";
+
+        window.onload = function() {
+            renderGems();
+            appendMessage('model', initialMessage);
+        };
+
+        // Renders the Gem cards from the data
+        function renderGems() {
+            gemsGrid.innerHTML = '';
+            gemsData.forEach((gem, index) => {
+                const gemCard = document.createElement('div');
+                gemCard.className = "bg-white p-6 rounded-2xl shadow-lg border-2 border-transparent hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer";
+                gemCard.onclick = () => showGemModal(gem);
+                gemCard.innerHTML = `
+                    <div class="flex items-center mb-3">
+                        <div class="p-2 bg-blue-100 text-blue-600 rounded-full mr-3">${gem.icon}</div>
+                        <h3 class="text-xl font-semibold text-gray-900">${gem.name}</h3>
+                    </div>
+                    <p class="text-sm font-medium text-blue-600 mb-2">${gem.purpose}</p>
+                    <p class="text-gray-600 text-sm">${gem.instructions.role}</p>
+                `;
+                gemsGrid.appendChild(gemCard);
+            });
+        }
+
+        // Shows the modal with detailed gem instructions
+        function showGemModal(gem) {
+            modalContent.innerHTML = `
+                <div class="flex justify-between items-start mb-6">
+                    <h3 class="text-2xl md:text-3xl font-bold text-blue-800">${gem.name}</h3>
+                    <button id="close-modal" class="p-2 rounded-full hover:bg-gray-200 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x text-gray-600"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                </div>
+                <div class="space-y-6 text-gray-800">
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-2">Purpose</h4>
+                        <p class="text-gray-600">${gem.purpose}</p>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-2">Instructions</h4>
+                        <ul class="list-disc list-inside space-y-3 pl-4 text-gray-600">
+                            <li>
+                                <span class="font-medium text-gray-900">Role:</span> ${gem.instructions.role}
+                            </li>
+                            <li>
+                                <span class="font-medium text-gray-900">Goal:</span> ${gem.instructions.goal}
+                            </li>
+                            <li>
+                                <span class="font-medium text-gray-900">Tone:</span> ${gem.instructions.tone}
+                            </li>
+                            <li>
+                                <span class="font-medium text-gray-900">Knowledge:</span> ${gem.instructions.knowledge}
+                            </li>
+                            <li>
+                                <span class="font-medium text-gray-900">Tasks:</span> ${gem.instructions.tasks}
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900 mb-2">Documents to Upload</h4>
+                        <p class="text-gray-600">${gem.documents}</p>
+                    </div>
+                </div>
+            `;
+            gemModal.classList.remove('hidden');
+            document.getElementById('close-modal').onclick = hideGemModal;
+        }
+
+        // Hides the modal
+        function hideGemModal() {
+            gemModal.classList.add('hidden');
+        }
+
+        // Appends a new message to the chat
+        function appendMessage(role, text) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+            messageElement.innerHTML = `
+                <div class="p-3 rounded-xl max-w-[80%] md:max-w-[70%] text-sm shadow-md ${role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}">
+                    <p>${text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>')}</p>
+                </div>
+            `;
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Handles the form submission
+        chatForm.addEventListener('submit', handleSendMessage);
+
+        async function handleSendMessage(e) {
+            e.preventDefault();
+            const userText = userInput.value.trim();
+            if (!userText || isLoading) return;
+
+            setIsLoading(true);
+            appendMessage('user', userText);
+            chatHistory.push({ role: 'user', parts: [{ text: userText }] });
+            userInput.value = '';
+
+            try {
+                // Show loading indicator
+                const loadingElement = document.createElement('div');
+                loadingElement.id = "loading-indicator";
+                loadingElement.className = "flex justify-start";
+                loadingElement.innerHTML = `
+                    <div class="p-3 bg-gray-200 text-gray-800 rounded-xl text-sm shadow-md">
+                        <div class="flex space-x-2">
+                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-100"></div>
+                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-200"></div>
+                            <div class="w-2 h-2 bg-gray-500 rounded-full animate-bounce delay-300"></div>
+                        </div>
+                    </div>
+                `;
+                chatContainer.appendChild(loadingElement);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                const prompt = `You are an AI assistant that helps users create instructions for a 'Learning Gem'.
+                The user is providing details for a new Gem. Your task is to ask a series of questions to gather all the necessary information, and then, at the end, generate a complete, formatted instruction block based on their answers.
+          
+                Follow this structured conversation flow:
+                1.  **Purpose:** What is the primary purpose of the Gem? (e.g., to help with math, to assist with writing) - You've already asked this.
+                2.  **Role:** What is the Gem's persona? (e.g., a "friendly math assistant," a "creative writing partner").
+                3.  **Goal:** What specific outcome do you want to achieve? (e.g., "Help students with essays," "Plan engaging science experiments").
+                4.  **Tone:** How should the Gem communicate? (e.g., "simple and fun," "professional and encouraging").
+                5.  **Tasks:** What specific actions should the Gem perform? (e.g., "ask guiding questions," "suggest fun activities").
+                6.  **Documents:** What documents will be needed for this Gem? (e.g., "curriculum document," "sample worksheets").
+          
+                When you have all the information, summarize it and ask for a final confirmation. If the user confirms, generate the final instruction block using a clear format with headings like **Purpose**, **Instructions**, and **Documents to Upload**.
+          
+                The current conversation history is:
+                ${chatHistory.map(m => `${m.role}: ${m.parts[0].text}`).join('\n')}
+          
+                Your next response should be the next question in the sequence, or the final generated instruction set if you have all the necessary information and the user has confirmed.`;
+
+                const payload = {
+                    contents: [...chatHistory, { role: 'user', parts: [{ text: userText }] }],
+                };
+                
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+
+                const result = await response.json();
+                const modelResponse = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate a response. Please try again.";
+                
+                // Hide loading indicator
+                document.getElementById('loading-indicator').remove();
+                
+                appendMessage('model', modelResponse);
+                chatHistory.push({ role: 'model', parts: [{ text: modelResponse }] });
+
+            } catch (error) {
+                console.error("API call failed:", error);
+                document.getElementById('loading-indicator').remove();
+                appendMessage('model', "An error occurred. Please try again.");
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        // Function to set the loading state and update button
+        function setIsLoading(loading) {
+            isLoading = loading;
+            if (loading) {
+                sendButton.disabled = true;
+                userInput.disabled = true;
+                sendButton.classList.add('disabled:bg-gray-400', 'disabled:cursor-not-allowed');
+            } else {
+                sendButton.disabled = false;
+                userInput.disabled = false;
+                sendButton.classList.remove('disabled:bg-gray-400', 'disabled:cursor-not-allowed');
+            }
+        }
+    </script>
+</body>
+</html>
